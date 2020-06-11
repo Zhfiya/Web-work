@@ -6,8 +6,14 @@
     <div class="flex options">
       <span class="option" @click="GoTo('/forum')">论坛</span>
       <span class="option" @click="GoTo('/blog')">博客区</span>
-      <span class="option" @click="GoTo('/personalCenter')">个人中心</span>
-      <span class="option" @click="Logout">退出登录</span>
+      <el-dropdown @command="handleCommand">
+        <img src="../assets/1.jpg" alt="" class="avator option el-dropdown-link">
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="/personalInfo"><i class="el-icon-setting"></i>个人资料</el-dropdown-item>
+          <el-dropdown-item><i class="el-icon-document-copy"></i>博客管理</el-dropdown-item>
+          <el-dropdown-item command="logout"><i class="el-icon-switch-button"></i>退出登录</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
   </div>
 </template>
@@ -17,6 +23,11 @@ import { mapState } from 'vuex';
 
 export default {
   name: 'menu',
+  data () {
+    return {
+      circleUrl: '../assets/1.jpg',
+    };
+  },
 
   computed: {
     ...mapState(['isLogin'])
@@ -24,6 +35,13 @@ export default {
   methods: {
     GoTo (val) {
       window.location.href = val;
+    },
+    handleCommand (command) {
+      if (command === 'logout') {
+        this.Logout();
+      } else {
+        window.location.href = command;
+      }
     },
     Logout () {
       this.$store.dispatch('set_login', false);
@@ -59,6 +77,11 @@ export default {
       font-size: 16px;
       cursor: pointer;
     }
+  }
+  .avator {
+    margin-top: 10px;
+    width: 40px;
+    height: 40px;
   }
 }
 </style>

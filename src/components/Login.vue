@@ -6,6 +6,7 @@
         <input
           type="text"
           placeholder="请输入用户名..."
+          v-model="name"
           class="input-underline"
         />
       </div>
@@ -13,6 +14,7 @@
         <input
           type="password"
           placeholder="请输入密码..."
+          v-model="pwd"
           class="input-underline"
         />
       </div>
@@ -31,7 +33,10 @@
 export default {
   name: 'login',
   data () {
-    return {};
+    return {
+      name: '',
+      pwd: '',
+    };
   },
 
   methods: {
@@ -41,7 +46,16 @@ export default {
     FindPwd () {
       window.location.href = '/findPwd';
     },
-    Login () {
+    async Login () {
+      try {
+        const res = await this.$axios.post('/login', {
+          name: this.name,
+          password: this.pwd,
+        });
+        console.log(res);
+      } catch (err) {
+        console.log(err);
+      }
       this.$store.dispatch('set_login', true);
       window.location.href = '/index';
     }
