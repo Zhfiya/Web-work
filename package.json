@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "element-ui": "^2.13.2",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
     "vuex": "^3.4.0"
@@ -43,7 +44,13 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {
+      "semi": ["error", "always"],
+      "no-console": 0,
+      "no-extra-semi": 0,
+      "no-console": 0,
+      "comma-dangle": 0
+    }
   },
   "browserslist": [
     "> 1%",
