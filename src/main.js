@@ -7,14 +7,16 @@ import router from './router';
 import store from './store';
 
 import './common.less';
+import common from './common.js';
 
 Vue.config.productionTip = false;
 
 Vue.use(ElementUI);
+Vue.use(common);
 
 Vue.prototype.$axios = axios;
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
-axios.defaults.baseURL = 'platform';
+axios.defaults.baseURL = 'api';
 
 new Vue({
   router,

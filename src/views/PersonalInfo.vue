@@ -11,15 +11,28 @@
         <div class="flex flex-col">
             <div class="flex flex-row row">
                 <label>用户名</label>
-                <span>{{ this.name }}</span>
+                <span v-if="!isEdit">{{ this.name }}</span>
+                <input type="text" class="input-underline" v-model="name" v-else>
             </div>
             <div class="flex flex-row row">
                 <label>性别</label>
-                <span>{{ this.sex }}</span>
+                <span v-if="!isEdit">{{ this.sex }}</span>
+                <el-select v-model="sex" placeholder="请选择" size="small" v-else>
+                  <el-option value="男">男</el-option>
+                  <el-option value="女">女</el-option>
+                </el-select>
             </div>
             <div class="flex flex-row row">
                 <label>生日</label>
-                <span>{{ this.birth }}</span>
+                <span v-if="!isEdit">{{ this.birth }}</span>
+                <el-date-picker
+                  v-model="birth"
+                  type="date"
+                  placeholder="选择日期"
+                  v-else
+                  value-format="yyyy/MM/dd"
+                  size="small">
+                </el-date-picker>
             </div>
             <div class="flex flex-row row">
                 <label>等级</label>
@@ -31,16 +44,27 @@
             </div>
             <div class="flex flex-row row">
                 <label>简介</label>
-                <span>{{ this.intro }}</span>
+                <span v-if="!isEdit">{{ this.intro }}</span>
+                <input type="text" v-model="intro" class="input-underline" v-else>
             </div>
         </div>
+    </div>
+    <div>
+      <button class="button main" @click="Edit" v-if="!isEdit">编辑资料</button>
+      <button class="button main" @click="Submit" v-else>提交</button>
+      <button class="button exit" v-if="isEdit" @click="Exit">取消编辑</button>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
   name: 'personalCenter',
+  computed: {
+    ...mapState(['uId']),
+  },
   data () {
     return {
       name: 'Fine',
@@ -50,7 +74,72 @@ export default {
       level: 5,
       intro: '啊哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈',
       portrait: 1,
+
+      isEdit: false,
     };
+  },
+
+  created () {
+    this.GetInfo();
+  },
+
+  methods: {
+    Edit () {
+      this.isEdit = true;
+    },
+    // 获取资料
+    async GetInfo () {
+      try {
+        const res = await this.$axios.post('/getUserInfo', {
+          u_id: this.uId,
+        });
+        const info = res.data;
+        if (info.code === 200) {
+          const infodata = info.data;
+          this.name = infodata.name;
+          this.email = infodata.email;
+          this.birth = infodata.birth;
+          this.level = infodata.level;
+          this.intro = infodata.information;
+        } else {
+          this.$message({
+            type: 'success',
+            message: info.message,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+      console.log(this.birth);
+    },
+    // 编辑资料
+    async Submit () {
+      try {
+        const res = await this.$axios.post('/updateUserInfo', {
+          u_id: this.uId,
+          name: this.name,
+          sex: this.sex,
+          information: this.intro,
+          birth: this.birth,
+          portrait: this.portrait,
+        });
+        const info = res.data;
+        if (info.code === 200) {
+          this.isEdit = false;
+        } else {
+          this.$message({
+            type: 'success',
+            message: info.message,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+      console.log(this.birth);
+    },
+    Exit () {
+      this.isEdit = false;
+    },
   }
 };
 </script>
@@ -73,6 +162,7 @@ export default {
   }
   .row {
     margin-bottom: 20px;
+    width: 100%;
     label {
       margin-left: 100px;
       display: inline-block;
@@ -91,6 +181,17 @@ export default {
         text-align: center;
         margin-top: 10px;
     }
+  }
+  input {
+    width: 400px;
+  }
+  button.main {
+    margin-top: 20px;
+    margin-right: 20px;
+    background-color: #a89dac;
+  }
+  button.exit {
+    background-color: lightgrey;
   }
 }
 </style>

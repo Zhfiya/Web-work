@@ -10,7 +10,8 @@
         <img src="../assets/1.jpg" alt="" class="avator option el-dropdown-link">
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="/personalInfo"><i class="el-icon-setting"></i>个人资料</el-dropdown-item>
-          <el-dropdown-item><i class="el-icon-document-copy"></i>博客管理</el-dropdown-item>
+          <el-dropdown-item command='/buildBlog'><i class="el-icon-edit"></i>写博客</el-dropdown-item>
+          <el-dropdown-item command='/personalBlog'><i class="el-icon-document-copy"></i>博客管理</el-dropdown-item>
           <el-dropdown-item command="logout"><i class="el-icon-switch-button"></i>退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>

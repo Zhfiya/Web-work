@@ -38,7 +38,9 @@ export default {
       pwd: '',
     };
   },
-
+  created () {
+    window.addEventListener('keydown', this.handleKeyDown, true);
+  },
   methods: {
     Register () {
       window.location.href = '/register';
@@ -47,18 +49,43 @@ export default {
       window.location.href = '/findPwd';
     },
     async Login () {
+      // this.$store.dispatch('set_login', true);
+      // window.location.href = '/index';
       try {
         const res = await this.$axios.post('/login', {
           name: this.name,
           password: this.pwd,
         });
-        console.log(res);
+        const info = res.data;
+        if (info.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '登录成功！'
+          });
+          this.$store.dispatch('set_uid', info.data);
+          this.$store.dispatch('set_login', true);
+          window.location.href = '/index';
+        } else {
+          this.$message({
+            type: 'error',
+            message: info.message
+          });
+        }
       } catch (err) {
         console.log(err);
       }
-      this.$store.dispatch('set_login', true);
-      window.location.href = '/index';
-    }
+    },
+    handleKeyDown (e) {
+      let key = null;
+      if (window.event === undefined) {
+        key = e.keyCode;
+      } else {
+        key = window.event.keyCode;
+      }
+      if (key === 13) {
+        this.Login();
+      }
+    },
   }
 };
 </script>

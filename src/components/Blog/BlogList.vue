@@ -120,7 +120,7 @@ export default {
     ToUpdate (blog) {
       const blogId = blog.blog_id;
       const { href } = this.$router.resolve({
-        path: '/updateBlog',
+        path: '/buildBlog',
         query: { blogId: blogId }
       });
       window.open(href, '_blank');
