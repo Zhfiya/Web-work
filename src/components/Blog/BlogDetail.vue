@@ -1,5 +1,5 @@
 <template>
-    <div id="blogDetail">
+    <div id="blogDetail" class="flex flex-col">
         <div class="center flex flex-col">
             <label class="title flex">{{ this.title }}</label>
             <div class="row flex flex-row">
@@ -12,7 +12,36 @@
                     <i @click="Star('add')" class="el-icon-star-off" v-else></i>
                 </span>
             </div>
-            <div class="flex" v-html="content"></div>
+            <div class="flex contents" v-html="content"></div>
+        </div>
+        <div class="discuss flex flex-col">
+            <div class="flex flex-row">
+               <span class="ping">评论</span>
+            </div>
+            <div class="flex flex-col list">
+                <div
+                v-for="item in list"
+                :key="item.name"
+                class="felx flex-row row jy-between">
+                    <div>
+                        <img src="../../assets/1.jpg" alt="">
+                        <span class="name">{{ item.name }}：</span>
+                        <span class="content">{{ item.content }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-row">
+                <span>发表评论</span>
+            </div>
+            <div class="flex flex-col comment_row">
+                <el-input
+                    type="textarea"
+                    autosize
+                    placeholder="请输入内容"
+                    v-model="discontent">
+                </el-input>
+                <button class="button">提交</button>
+            </div>
         </div>
     </div>
 </template>
@@ -32,7 +61,9 @@ export default {
       like: 0,
       isLike: '',
       blogId: 0,
-      content: ''
+      content: '',
+      list: [{ name: 'fine', content: '啊啊啊啊aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa啊' }, { name: 'jv', content: 'hahah' }],
+      discontent: '',
     };
   },
 
@@ -104,12 +135,12 @@ export default {
 <style lang="less" scoped>
 #blogDetail {
   margin-top: 60px;
-
-  .center {
-    padding: 30px;
     margin-top: 7%;
     margin-left: 15%;
     width: 70%;
+
+  .center {
+    padding: 30px;
     background-color: #F3F3F4;
     border-radius: 5px;
 
@@ -142,6 +173,43 @@ export default {
         cursor: pointer;
       }
     }
+    .contents {
+        text-align: left;
+    }
   }
+    .discuss {
+        margin-top: 50px;
+        .ping {
+            font-size: 20px;
+            padding: 5px;
+        }
+        .list {
+            margin-top: 20px;
+            margin-bottom: 100px;
+        }
+        .row {
+            text-align: left;
+            padding: 10px 20px;
+            border-bottom: 1px dashed;
+            margin-bottom: 10px;
+
+            span {
+                margin-left: 10px;
+                word-break: break-all;
+            }
+        }
+        img {
+            width: 50px;
+            height: 50px;
+        }
+        .comment_row {
+            margin-top: 10px;
+            margin-bottom: 50px;
+            button {
+                margin-top: 10px;
+                width: 100px;
+            }
+        }
+    }
 }
 </style>
