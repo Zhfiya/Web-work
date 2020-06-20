@@ -1,5 +1,5 @@
 <template>
-    <div id="blogDetail" class="flex flex-col">
+    <div id="blogDetail" class="flex flex-col" v-if="update">
         <div class="center flex flex-col">
             <label class="title flex">{{ this.title }}</label>
             <div class="row flex flex-row">
@@ -18,10 +18,10 @@
             <div class="flex flex-row">
                <span class="ping">评论</span>
             </div>
-            <div class="flex flex-col list">
+            <div class="flex flex-col list" v-if="list.length>0">
                 <div
                 v-for="item in list"
-                :key="item.name"
+                :key="item.name && item.pass_time && item.content"
                 class="felx flex-row row jy-between">
                     <div>
                         <img src="../../assets/1.jpg" alt="">
@@ -29,6 +29,9 @@
                         <span class="content">{{ item.content }}</span>
                     </div>
                 </div>
+            </div>
+            <div class="zanwu" v-if="list.length === 0">
+                <span>暂无评论</span>
             </div>
             <div class="flex flex-row">
                 <span>发表评论</span>
@@ -40,7 +43,7 @@
                     placeholder="请输入内容"
                     v-model="discontent">
                 </el-input>
-                <button class="button">提交</button>
+                <button class="button" @click="SubmitComment">提交</button>
             </div>
         </div>
     </div>
@@ -62,8 +65,10 @@ export default {
       isLike: '',
       blogId: 0,
       content: '',
-      list: [{ name: 'fine', content: '啊啊啊啊aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa啊' }, { name: 'jv', content: 'hahah' }],
+      list: [],
       discontent: '',
+
+      update: true,
     };
   },
 
@@ -75,6 +80,7 @@ export default {
     this.blogId = this.$route.query.blogId;
     console.log(this.blogId);
     this.GetBlogDetail();
+    this.GetComment();
   },
 
   methods: {
@@ -127,7 +133,50 @@ export default {
       } catch (err) {
         console.log(err);
       }
-    }
+    },
+    // 获取评论
+    async GetComment () {
+      try {
+        const res = await this.$axios.post('/getCommentInfo', {
+          u_id: this.uId,
+          blog_id: this.blogId,
+        });
+        const info = res.data;
+        // console.log(info);
+        if (info.code === 200) {
+          this.list = info.data;
+        } else if (info.code === 409) {
+          this.sessionJudge();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    // 评论
+    async SubmitComment () {
+      try {
+        const res = await this.$axios.post('/writeComment', {
+          u_id: this.uId,
+          blog_id: this.blogId,
+          content: this.discontent,
+          author_id: 1,
+        });
+        const info = res.data;
+        // console.log(info);
+        if (info.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '评论成功',
+          });
+          this.Refresh();
+          this.discontent = '';
+        } else if (info.code === 409) {
+          this.sessionJudge();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
   }
 };
 </script>
@@ -182,10 +231,17 @@ export default {
         .ping {
             font-size: 20px;
             padding: 5px;
+            background-color:lightgoldenrodyellow;
         }
         .list {
             margin-top: 20px;
             margin-bottom: 100px;
+        }
+        .zanwu {
+            margin: 20px 0;
+            color: lightcoral;
+            font-weight: bold;
+            font-size: 18px;
         }
         .row {
             text-align: left;
@@ -207,7 +263,8 @@ export default {
             margin-bottom: 50px;
             button {
                 margin-top: 10px;
-                width: 100px;
+                width: 70px;
+                background-color:lightsteelblue;
             }
         }
     }
