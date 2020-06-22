@@ -156,11 +156,11 @@ export default {
         }
 
         .el-carousel__item:nth-child(2n) {
-            background:url('../assets/special.jpg');
+            background:url('../assets/y.jpg');
         }
 
         .el-carousel__item:nth-child(2n+1) {
-            background:url('../assets/alchemy.gif');
+            background:url('../assets/xing.jpg');
         }
         .select_row {
             width: 100%;

@@ -1,52 +1,62 @@
 <template>
-    <div id="blogDetail" class="flex flex-col" v-if="update">
-        <div class="center flex flex-col">
-            <label class="title flex">{{ this.title }}</label>
-            <div class="row flex flex-row">
-                <span class="tag">{{ this.tag }}</span>
-                <span class="author">{{ this.author }}</span>
-                <span>发布于{{ this.uploadTime }}</span>
-                <span>
-                    点赞数：{{ this.like }}
-                    <i @click="Star('reduce')" class="el-icon-star-on" v-if="isLike === 'true'"></i>
-                    <i @click="Star('add')" class="el-icon-star-off" v-else></i>
-                </span>
-            </div>
-            <div class="flex contents" v-html="content"></div>
-        </div>
-        <div class="discuss flex flex-col">
-            <div class="flex flex-row">
-               <span class="ping">评论</span>
-            </div>
-            <div class="flex flex-col list" v-if="list.length>0">
-                <div
-                v-for="item in list"
-                :key="item.name && item.pass_time && item.content"
-                class="felx flex-row row jy-between">
-                    <div>
-                        <img src="../../assets/1.jpg" alt="">
-                        <span class="name">{{ item.name }}：</span>
-                        <span class="content">{{ item.content }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="zanwu" v-if="list.length === 0">
-                <span>暂无评论</span>
-            </div>
-            <div class="flex flex-row">
-                <span>发表评论</span>
-            </div>
-            <div class="flex flex-col comment_row">
-                <el-input
-                    type="textarea"
-                    autosize
-                    placeholder="请输入内容"
-                    v-model="discontent">
-                </el-input>
-                <button class="button" @click="SubmitComment">提交</button>
-            </div>
-        </div>
+  <div id="blogDetail" class="flex flex-col" v-if="update">
+    <div class="center flex flex-col">
+      <label class="title flex">{{ this.title }}</label>
+      <div class="row flex flex-row">
+          <span class="tag">{{ this.tag }}</span>
+          <span class="author">{{ this.author }}</span>
+          <span>发布于{{ this.uploadTime }}</span>
+          <span>
+            点赞数：{{ this.like }}
+            <i @click="Star('reduce')" class="el-icon-star-on" v-if="isLike === 'true'"></i>
+            <i @click="Star('add')" class="el-icon-star-off" v-else></i>
+          </span>
+      </div>
+      <div class="flex contents" v-html="content"></div>
     </div>
+    <div class="discuss flex flex-col">
+      <div class="flex flex-row">
+        <span class="ping">评论</span>
+      </div>
+      <div class="flex flex-col list" v-if="list.length>0">
+        <div
+        v-for="item in list"
+        :key="item.name && item.pass_time && item.content"
+        class="felx flex-row row">
+          <div class="flex flex-col">
+            <div class="flex">
+              <img src="../../assets/1.jpg" alt="" class="ava">
+              <span class="content">{{ item.content }}</span>
+            </div>
+            <div class="flex flex-row jy-between">
+              <span class="time">{{ item.name }}</span>
+              <div class="flex flex-row">
+                <span class="delete">删除</span>
+                <img src="../../assets/dislike.png" alt="" v-if="!item.is_like" @click="StarComment('add', item.comment_id)">
+                <img src="../../assets/like.png" alt="" v-if="item.is_like" @click="StarComment('reduce', item.comment_id)">
+                <span class="time">{{ item.pass_time }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="zanwu" v-if="list.length === 0">
+        <span>暂无评论</span>
+      </div>
+      <div class="flex flex-row">
+        <span>发表评论</span>
+      </div>
+      <div class="flex flex-col comment_row">
+        <el-input
+          type="textarea"
+          autosize
+          placeholder="请输入内容"
+          v-model="discontent">
+        </el-input>
+        <button class="button" @click="SubmitComment">提交</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -73,12 +83,12 @@ export default {
   },
 
   computed: {
-    ...mapState(['uId'])
+    ...mapState(['uId']),
+    ...mapState(['uName']),
   },
 
   created () {
     this.blogId = this.$route.query.blogId;
-    console.log(this.blogId);
     this.GetBlogDetail();
     this.GetComment();
   },
@@ -134,6 +144,25 @@ export default {
         console.log(err);
       }
     },
+    // 评论点赞
+    async StarComment (typeOfLike, id) {
+      try {
+        const res = await this.$axios.post('/changeCommentLike', {
+          u_id: this.uId,
+          comment_id: id,
+          typeOfLike: typeOfLike
+        });
+        const info = res.data;
+        // console.log(info);
+        if (info.code === 200) {
+          this.Refresh();
+        } else if (info.code === 409) {
+          this.sessionJudge();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
     // 获取评论
     async GetComment () {
       try {
@@ -159,7 +188,7 @@ export default {
           u_id: this.uId,
           blog_id: this.blogId,
           content: this.discontent,
-          author_id: 1,
+          author_id: 2,
         });
         const info = res.data;
         // console.log(info);
@@ -223,50 +252,70 @@ export default {
       }
     }
     .contents {
-        text-align: left;
+      text-align: left;
     }
   }
-    .discuss {
-        margin-top: 50px;
-        .ping {
-            font-size: 20px;
-            padding: 5px;
-            background-color:lightgoldenrodyellow;
-        }
-        .list {
-            margin-top: 20px;
-            margin-bottom: 100px;
-        }
-        .zanwu {
-            margin: 20px 0;
-            color: lightcoral;
-            font-weight: bold;
-            font-size: 18px;
-        }
-        .row {
-            text-align: left;
-            padding: 10px 20px;
-            border-bottom: 1px dashed;
-            margin-bottom: 10px;
-
-            span {
-                margin-left: 10px;
-                word-break: break-all;
-            }
-        }
-        img {
-            width: 50px;
-            height: 50px;
-        }
-        .comment_row {
-            margin-top: 10px;
-            margin-bottom: 50px;
-            button {
-                margin-top: 10px;
-                width: 70px;
-                background-color:lightsteelblue;
-            }
-        }
+  .discuss {
+    margin-top: 50px;
+    .ping {
+      font-size: 20px;
+      padding: 5px;
+      background-color:lightgoldenrodyellow;
     }
+    .list {
+      margin-top: 20px;
+      margin-bottom: 100px;
+    }
+    .zanwu {
+      margin: 20px 0;
+      color: lightcoral;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .row {
+      text-align: left;
+      padding: 10px 20px;
+      border-bottom: 1px dashed;
+      margin-bottom: 10px;
+
+      span {
+        margin-left: 10px;
+        word-break: break-all;
+      }
+      .delete {
+        margin-top: 5px;
+        margin-right: 5px;
+        font-size: 12px;
+        color: #e8989a;
+        cursor: pointer;
+      }
+      .ava {
+        margin-right: 20px;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+      }
+      .time {
+        font-size: 12px;
+        color: darkgrey;
+        margin: 5px 0 0 15px;
+      }
+    }
+    img {
+      margin-top: 2px;
+      width: 25px;
+      height: 25px;
+      cursor: pointer;
+    }
+    .comment_row {
+      margin-top: 10px;
+      margin-bottom: 50px;
+      button {
+        margin-top: 10px;
+        width: 70px;
+        background-color:lightsteelblue;
+      }
+    }
+  }
 }
 </style>

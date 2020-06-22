@@ -97,6 +97,7 @@ export default {
         if (info.code === 200) {
           const infodata = info.data;
           this.name = infodata.name;
+          this.$store.dispatch('set_name', infodata.name);
           this.email = infodata.email;
           this.birth = infodata.birth;
           this.level = infodata.level;
