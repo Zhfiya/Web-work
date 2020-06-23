@@ -77,6 +77,7 @@ export default {
       content: '',
       list: [],
       discontent: '',
+      author_id: 0,
 
       update: true,
     };
@@ -108,6 +109,7 @@ export default {
           this.title = infodata.name;
           this.tag = infodata.tag;
           this.uploadTime = infodata.upload_time;
+          this.author_id = infodata.author_id;
           this.like = infodata.like_num;
           this.isLike = infodata.is_like;
           this.content = infodata.html;
@@ -188,7 +190,7 @@ export default {
           u_id: this.uId,
           blog_id: this.blogId,
           content: this.discontent,
-          author_id: 2,
+          author_id: this.author_id,
         });
         const info = res.data;
         // console.log(info);

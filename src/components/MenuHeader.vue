@@ -44,9 +44,21 @@ export default {
         window.location.href = command;
       }
     },
-    Logout () {
-      this.$store.dispatch('set_login', false);
-      window.location.href = '/';
+    async Logout () {
+      try {
+        const res = await this.$axios.post('/logout', {});
+        const info = res.data;
+        if (info.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '退出登录',
+          });
+          this.$store.dispatch('set_login', false);
+          window.location.href = '/';
+        }
+      } catch (err) {
+        console.log(err);
+      }
     }
   }
 };
