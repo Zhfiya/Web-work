@@ -79,9 +79,21 @@
         欢迎来到F+技术论坛！<br>
         左侧是论坛索引，您可以查看对应tag的帖子或对帖子进行查询
       </div>
-      <div class="rank">
+      <div class="rank fle flex-col">
         <span>排行榜</span>
         <hr>
+        <div class="flex flex-col">
+          <div
+          v-for="item in UList"
+          :key="item.id"
+          class="flex flex-row jy-between rank_row">
+          <div>
+            <span class="rank_ap">{{ item.rank }}</span>
+            <span>{{ item.name }}</span>
+          </div>
+          <span>{{ item.grade }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -105,8 +117,12 @@ export default {
       tag2: '非技术区',
       select: '',
       selectRes: [],
+      UList: [],
       update: true,
     };
+  },
+  created () {
+    this.GetRank();
   },
   methods: {
     Cli (type) {
@@ -146,6 +162,18 @@ export default {
           } else {
             this.Refresh();
           }
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async GetRank () {
+      try {
+        const res = await this.$axios.post('/sortUserByGrade', {});
+        const info = res.data;
+        if (info.code === 200) {
+          console.log(info.data);
+          this.UList = info.data;
         }
       } catch (err) {
         console.log(err);
@@ -248,6 +276,14 @@ export default {
       margin-top: 10px;
       text-align: left;
       padding: 10px;
+      .rank_row {
+        border-bottom: 1px solid lightgrey;
+        padding: 5px;
+      }
+      .rank_ap {
+        font-weight: bold;
+        margin-right: 20px;
+      }
     }
   }
 }
