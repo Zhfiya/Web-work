@@ -1,14 +1,14 @@
 <template>
-  <div id="forum" class="flex flex-row">
+  <div id="forum" class="flex flex-row background" v-if="update">
     <div class="left flex flex-col">
       <div class="flex flex-row">
-        <input type="text" class="input-underline">
-        <i class="el-icon-search"></i>
+        <input type="text" class="input-underline" v-model="select">
+        <i class="el-icon-search" @click="Select"></i>
       </div>
       <div
-      @click="Cli('index')"
+      @click="Cli('all')"
       class="flex flex-row index"
-      :class="{active: type === 'index'}">
+      :class="{active: type === 'all'}">
         <span>论坛首页</span>
       </div>
       <div
@@ -37,8 +37,52 @@
         </div>
       </div>
     </div>
-    <div>
-      <ForumList />
+    <div class="flex flex-col center" v-if="this.type === 'all' && selectRes.length === 0">
+      <div class="center_box">
+        <div class="flex flex-row title jy-between">
+            <span>热帖·技术区</span>
+            <span class="more">更多</span>
+        </div>
+        <ForumList :tag="tag1"/>
+      </div>
+      <div class="center_box">
+        <div class="flex flex-row title jy-between">
+            <span>热帖·非技术区</span>
+            <span class="more">更多</span>
+        </div>
+        <ForumList :tag="tag2"/>
+      </div>
+    </div>
+    <div class="flex flex-col center" v-if="this.type !== 'all' && selectRes.length === 0">
+      <div class="center_box">
+        <div class="flex flex-row title jy-between">
+            <span>热帖·{{ this.type }}</span>
+            <span class="more">更多</span>
+        </div>
+        <ForumList :tag="type"/>
+      </div>
+    </div>
+    <div class="flex flex-col center" v-if="this.selectRes.length !== 0">
+      <div class="center_box">
+        <div class="flex flex-row title jy-between">
+            <span>热帖·{{ this.select }}</span>
+            <span class="more">更多</span>
+        </div>
+        <ForumList :res="selectRes"/>
+      </div>
+    </div>
+    <div class="flex flex-col right">
+      <button class="button" @click="GoBuild">我要发帖</button>
+      <div class="tip">
+        <span>论坛公告</span>
+        <hr>
+        欢迎来到F+技术论坛！<br>
+        左侧是论坛索引，您可以查看对应tag的帖子或对帖子进行查询
+      </div>
+      <div class="rank">
+        <span>排行榜</span>
+        <hr>
+      </div>
     </div>
   </div>
 </template>
@@ -54,14 +98,58 @@ export default {
   data () {
     return {
       list: ['移动开发', '云计算', '区块链', '企业IT', '.NET技术', 'JAVA技术', 'Web技术', '开发语言/框架', '数据库开发', 'Linux社区', 'Windows专区',
-        '嵌入式开发', '游戏开发', '网络与通信', '求职招聘', '其他技术', '扩充话题/反馈'],
+        '嵌入式开发', '游戏开发', '网络与通信', '求职招聘', '其他技术', '灌水区', '扩充话题/反馈'],
       search: '',
-      type: 'index',
+      type: 'all',
+      tag1: '技术区',
+      tag2: '非技术区',
+      select: '',
+      selectRes: [],
+      update: true,
     };
   },
   methods: {
     Cli (type) {
+      this.select = '';
+      this.selectRes = [];
       this.type = type;
+      this.Refresh();
+    },
+    Refresh () {
+      this.update = false;
+      // 在组件移除后，重新渲染组件
+      // this.$nextTick可实现在DOM 状态更新后，执行传入的方法。
+      this.$nextTick(() => {
+        this.update = true;
+      });
+    },
+    GoBuild () {
+      const { href } = this.$router.resolve({
+        path: '/buildQuestion',
+      });
+      window.open(href, '_blank');
+    },
+    async Select () {
+      try {
+        const res = await this.$axios.post('/getQuestionByContent', {
+          content: this.select,
+        });
+        const info = res.data;
+        if (info.code === 200) {
+          this.type = '';
+          this.selectRes = info.data;
+          if (info.data.length === 0) {
+            this.$message({
+              type: 'error',
+              message: '暂无帖子',
+            });
+          } else {
+            this.Refresh();
+          }
+        }
+      } catch (err) {
+        console.log(err);
+      }
     },
   }
 };
@@ -70,6 +158,7 @@ export default {
 <style lang="less" scoped>
 #forum {
   margin-top: 60px;
+  background-color: #f5f6f7;
   .active {
     color: red;
     text-decoration: underline;
@@ -98,7 +187,7 @@ export default {
       cursor: pointer;
     }
     .my {
-      color:lightcoral;
+      color:orangered;
     }
     input {
       width: 170px;
@@ -111,6 +200,54 @@ export default {
     i {
       margin-top: 10px;
       cursor: pointer;
+    }
+  }
+  .center {
+    margin-top: 50px;
+    margin-left: 250px;
+    .center_box {
+      margin-bottom: 30px;
+    }
+  }
+  .title {
+    padding: 5px;
+    width: 900px;
+    background-color: #e3e6e8;
+    span {
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    span.more {
+      font-weight: normal;
+      font-size: 15px;
+      cursor: pointer;
+    }
+  }
+  .right {
+    margin-top: 50px;
+    margin-left: 30px;
+
+    button {
+      margin-bottom: 10px;
+      background-color:lightslategrey;
+      color: #fff;
+    }
+    .tip {
+      text-align: left;
+      width: 250px;
+      padding: 10px;
+      background-color: #fff;
+      font-size: 14px;
+      span {
+        color: darkgrey;
+        font-weight: bold;
+      }
+    }
+    .rank {
+      background-color: #fff;
+      margin-top: 10px;
+      text-align: left;
+      padding: 10px;
     }
   }
 }
