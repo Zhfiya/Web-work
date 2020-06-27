@@ -31,7 +31,7 @@
             <div class="flex flex-row jy-between">
               <span class="time">{{ item.name }}</span>
               <div class="flex flex-row">
-                <span class="delete">删除</span>
+                <span class="delete" @click="DeleteComment(item.comment_id, item.name)">删除</span>
                 <img src="../../assets/dislike.png" alt="" v-if="!item.is_like" @click="StarComment('add', item.comment_id)">
                 <img src="../../assets/like.png" alt="" v-if="item.is_like" @click="StarComment('reduce', item.comment_id)">
                 <span class="time">{{ item.pass_time }}</span>
@@ -163,6 +163,46 @@ export default {
         }
       } catch (err) {
         console.log(err);
+      }
+    },
+    // 删除评论
+    async DeleteComment (id, name) {
+      console.log(this.uName);
+      if (this.uName === name) {
+        this.$confirm('此操作将永久删除该评论, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async () => {
+          try {
+            const res = await this.$axios.post('/deleteComment', {
+              comment_id: id,
+            });
+            const info = res.data;
+            // console.log(info);
+            if (info.code === 200) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+              this.Refresh();
+            } else if (info.code === 409) {
+              this.sessionJudge();
+            }
+          } catch (err) {
+            console.log(err);
+          }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      } else {
+        this.$message({
+          type: 'error',
+          message: '您无法删除该评论'
+        });
       }
     },
     // 获取评论

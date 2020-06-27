@@ -37,12 +37,20 @@
         </div>
       </div>
     </div>
+    <div>
+      <ForumList />
+    </div>
   </div>
 </template>
 
 <script>
+import ForumList from '../components/Forum/ForumList';
+
 export default {
   name: 'forum',
+  components: {
+    ForumList,
+  },
   data () {
     return {
       list: ['移动开发', '云计算', '区块链', '企业IT', '.NET技术', 'JAVA技术', 'Web技术', '开发语言/框架', '数据库开发', 'Linux社区', 'Windows专区',

@@ -63,8 +63,9 @@ export default {
             message: '登录成功！'
           });
           this.$store.dispatch('set_uid', info.data);
+          this.$store.dispatch('set_name', this.name);
           this.$store.dispatch('set_login', true);
-          window.location.href = '/index';
+          window.location.href = '/forum';
         } else {
           this.$message({
             type: 'error',

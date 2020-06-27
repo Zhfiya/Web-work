@@ -1,38 +1,38 @@
 <template>
-    <div id="blogList" class="flex flex-col" v-if="update">
-      <div
-      v-for="item in blogList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-      :key="item.blog_id"
-      class="flex flex-col blog">
-        <div class="flex flex-row blog_row" @click="ToDetail(item)">
-          <label class="tag">{{ item.tag }}</label>
-          <label class="name">{{ item.name }}</label>
-        </div>
-        <div class="row flex jy-between">
-          <div>
-            <span><i class="el-icon-upload"></i>{{ item.upload_time }}</span>
-            <span>|</span>
-            <span><i class="el-icon-star-on"></i>获赞量：{{ item.like_num }}</span>
-          </div>
-          <div v-if="typeOfTime">
-            <span class="update" @click="ToUpdate(item)">修改</span>
-            <span>|</span>
-            <span class="update" @click="confirm(item.blog_id)">删除</span>
-          </div>
-        </div>
+  <div id="blogList" class="flex flex-col" v-if="update">
+    <div
+    v-for="item in blogList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+    :key="item.blog_id"
+    class="flex flex-col blog">
+      <div class="flex flex-row blog_row" @click="ToDetail(item)">
+        <label class="tag">{{ item.tag }}</label>
+        <label class="name">{{ item.name }}</label>
       </div>
-      <div v-if="blogList.length > 0">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page.sync="currentPage"
-          :page-size="pageSize"
-          layout="total, prev, pager, next, jumper"
-          :total="totalCount"
-          class="page">
-        </el-pagination>
+      <div class="row flex jy-between">
+        <div>
+          <span><i class="el-icon-upload"></i>{{ item.upload_time }}</span>
+          <span>|</span>
+          <span><i class="el-icon-star-on"></i>获赞量：{{ item.like_num }}</span>
+        </div>
+        <div v-if="typeOfTime">
+          <span class="update" @click="ToUpdate(item)">修改</span>
+          <span>|</span>
+          <span class="update" @click="confirm(item.blog_id)">删除</span>
+        </div>
       </div>
     </div>
+    <div v-if="blogList.length > 0">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="currentPage"
+        :page-size="pageSize"
+        layout="total, prev, pager, next, jumper"
+        :total="totalCount"
+        class="page">
+      </el-pagination>
+    </div>
+  </div>
 </template>
 
 <script>
