@@ -1,26 +1,26 @@
 <template>
-    <div id="buildQues" class="flex flex-col background">
-        <div class="flex flex-col info">
-            <el-input
-            type="textarea"
-            :autosize="{ minRows: 10}"
-            placeholder="请输入内容"
-            v-model="content">
-            </el-input>
-        </div>
-        <div class="flex flex-row tag_row">
-            <span>帖子版块</span>
-            <el-select v-model="tag" placeholder="请选择" size="small">
-                <el-option
-                v-for="item in tagList"
-                :key="item"
-                :label="item"
-                :value="item">
-                </el-option>
-            </el-select>
-        </div>
-        <button class="button" @click="Submit">发表</button>
+  <div id="buildQues" class="flex flex-col background">
+    <div class="flex flex-col info">
+      <el-input
+      type="textarea"
+      :autosize="{ minRows: 10}"
+      placeholder="请输入内容"
+      v-model="content">
+      </el-input>
     </div>
+    <div class="flex flex-row tag_row">
+      <span>帖子版块</span>
+      <el-select v-model="tag" placeholder="请选择" size="small">
+        <el-option
+        v-for="item in tagList"
+        :key="item"
+        :label="item"
+        :value="item">
+        </el-option>
+      </el-select>
+    </div>
+    <button class="button" @click="Submit">发表</button>
+  </div>
 </template>
 
 <script>

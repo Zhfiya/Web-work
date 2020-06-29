@@ -7,7 +7,7 @@
       <span class="option" @click="GoTo('/forum')">论坛</span>
       <span class="option" @click="GoTo('/blog')">博客区</span>
       <el-dropdown @command="handleCommand">
-        <img src="../assets/1.jpg" alt="" class="avator option el-dropdown-link">
+        <img src="../assets/avator/1.jpg" alt="" class="avator option el-dropdown-link">
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="/personalInfo"><i class="el-icon-setting"></i>个人资料</el-dropdown-item>
           <el-dropdown-item command='/buildBlog'><i class="el-icon-edit"></i>写博客</el-dropdown-item>

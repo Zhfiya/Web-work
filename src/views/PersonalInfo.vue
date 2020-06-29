@@ -5,48 +5,52 @@
     </div>
     <div class="flex flex-row card">
         <div class="flex flex-col avator">
-            <img src="../assets/1.jpg" alt="">
-            <span>修改头像</span>
+          <img src="../assets/avator/1.jpg" alt="">
+          <span @click="dialogVisible = true">修改头像</span>
+          <div class="flex flex-row jy-center fans_row">
+            <span class="guan">关注<br>{{ this.guan }}</span>
+            <span class="fen">粉丝<br>{{ this.fen }}</span>
+          </div>
         </div>
         <div class="flex flex-col">
-            <div class="flex flex-row row">
-                <label>用户名</label>
-                <span v-if="!isEdit">{{ this.name }}</span>
-                <input type="text" class="input-underline" v-model="name" v-else>
-            </div>
-            <div class="flex flex-row row">
-                <label>性别</label>
-                <span v-if="!isEdit">{{ this.sex }}</span>
-                <el-select v-model="sex" placeholder="请选择" size="small" v-else>
-                  <el-option value="男">男</el-option>
-                  <el-option value="女">女</el-option>
-                </el-select>
-            </div>
-            <div class="flex flex-row row">
-                <label>生日</label>
-                <span v-if="!isEdit">{{ this.birth }}</span>
-                <el-date-picker
-                  v-model="birth"
-                  type="date"
-                  placeholder="选择日期"
-                  v-else
-                  value-format="yyyy/MM/dd"
-                  size="small">
-                </el-date-picker>
-            </div>
-            <div class="flex flex-row row">
-                <label>等级</label>
-                <span>{{ this.level }}</span>
-            </div>
-            <div class="flex flex-row row">
-                <label>邮箱</label>
-                <span>{{ this.email }}</span>
-            </div>
-            <div class="flex flex-row row">
-                <label>简介</label>
-                <span v-if="!isEdit">{{ this.intro }}</span>
-                <input type="text" v-model="intro" class="input-underline" v-else>
-            </div>
+          <div class="flex flex-row row">
+            <label>用户名</label>
+            <span v-if="!isEdit">{{ this.name }}</span>
+            <input type="text" class="input-underline" v-model="name" v-else>
+          </div>
+          <div class="flex flex-row row">
+            <label>性别</label>
+            <span v-if="!isEdit">{{ this.sex }}</span>
+            <el-select v-model="sex" placeholder="请选择" size="small" v-else>
+              <el-option value="男">男</el-option>
+              <el-option value="女">女</el-option>
+            </el-select>
+          </div>
+          <div class="flex flex-row row">
+            <label>生日</label>
+            <span v-if="!isEdit">{{ this.birth }}</span>
+            <el-date-picker
+              v-model="birth"
+              type="date"
+              placeholder="选择日期"
+              v-else
+              value-format="yyyy/MM/dd"
+              size="small">
+            </el-date-picker>
+          </div>
+          <div class="flex flex-row row">
+            <label>等级</label>
+            <span>{{ this.level }}</span>
+          </div>
+          <div class="flex flex-row row">
+            <label>邮箱</label>
+            <span>{{ this.email }}</span>
+          </div>
+          <div class="flex flex-row row">
+            <label>简介</label>
+            <span v-if="!isEdit">{{ this.intro }}</span>
+            <input type="text" v-model="intro" class="input-underline" v-else>
+          </div>
         </div>
     </div>
     <div>
@@ -54,6 +58,26 @@
       <button class="button main" @click="Submit" v-else>提交</button>
       <button class="button exit" v-if="isEdit" @click="Exit">取消编辑</button>
     </div>
+    <el-dialog
+      title="修改头像"
+      :visible.sync="dialogVisible"
+      width="600px">
+      <div class="flex flex-col win">
+        <div
+        v-for="it in avs"
+        :key="it"
+        class="flex flex-row">
+          <img :src="it.src" alt="">
+        </div>
+        <div class="flex flex-row">
+          <img src="../assets/avator/6.jpg" alt=""><img src="../assets/avator/7.jpg" alt=""><img src="../assets/avator/8.jpg" alt=""><img src="../assets/avator/9.jpg" alt=""><img src="../assets/avator/10.jpg" alt="">
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -74,13 +98,24 @@ export default {
       level: 5,
       intro: '啊哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈',
       portrait: 1,
+      guan: 0,
+      fen: 0,
+      avs: [
+        { src: require('../assets/avator/1.jpg') },
+        { src: require('../assets/avator/2.jpg') },
+        { src: require('../assets/avator/3.jpg') },
+        { src: require('../assets/avator/4.jpg') },
+        { src: require('../assets/avator/5.jpg') },
+      ],
 
       isEdit: false,
+      dialogVisible: false,
     };
   },
 
   created () {
     this.GetInfo();
+    this.GetCount();
   },
 
   methods: {
@@ -111,7 +146,6 @@ export default {
       } catch (err) {
         console.log(err);
       }
-      console.log(this.birth);
     },
     // 编辑资料
     async Submit () {
@@ -136,10 +170,30 @@ export default {
       } catch (err) {
         console.log(err);
       }
-      console.log(this.birth);
     },
     Exit () {
       this.isEdit = false;
+    },
+    async GetCount () {
+      try {
+        const res1 = await this.$axios.post('/countFollowers', {
+          u_id: this.uId,
+        });
+        const res2 = await this.$axios.post('/countFans', {
+          u_id: this.uId,
+        });
+        const info1 = res1.data;
+        const info2 = res2.data;
+        if (info1.code === 200) {
+          const infodata = info1.data;
+          this.guan = infodata.followerNum;
+        } else if (info2.code === 200) {
+          const infodata = info2.data;
+          this.fen = infodata.fanNum;
+        }
+      } catch (err) {
+        console.log(err);
+      }
     },
   }
 };
@@ -148,6 +202,7 @@ export default {
 <style lang="less" scoped>
 #personalCenter{
   margin-top: 60px;
+  position: absolute;
   background: linear-gradient(#FFFFFF, #e9e7ef);
   .title {
     margin-top: 100px;
@@ -181,6 +236,25 @@ export default {
         font-size: 13px;
         text-align: center;
         margin-top: 10px;
+    }
+  }
+  .fans_row {
+    margin-top: 20px;
+    .guan {
+      padding-right: 10px;
+      border-right: 1px solid darkgrey;
+    }
+    .fen {
+      padding-left: 10px;
+    }
+    span {
+      font-weight: bold;
+      font-size: 15px;
+    }
+  }
+  .win {
+    img {
+      cursor: pointer;
     }
   }
   input {

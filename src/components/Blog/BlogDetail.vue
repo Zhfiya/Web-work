@@ -25,7 +25,7 @@
         class="felx flex-row row">
           <div class="flex flex-col">
             <div class="flex">
-              <img src="../../assets/1.jpg" alt="" class="ava">
+              <img src="../../assets/avator/1.jpg" alt="" class="ava">
               <span class="content">{{ item.content }}</span>
             </div>
             <div class="flex flex-row jy-between">
