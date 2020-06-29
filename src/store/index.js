@@ -8,6 +8,7 @@ export default new Vuex.Store({
     isLogin: false,
     uId: '',
     uName: '',
+    avator: 1,
   },
   mutations: {
     setLogin (state, isLogin) {
@@ -19,6 +20,9 @@ export default new Vuex.Store({
     setName (state, uName) {
       state.uName = uName;
     },
+    setAvator (state, avator) {
+      state.uName = avator;
+    },
   },
   actions: {
     set_login (set, isLogin) {
@@ -29,6 +33,9 @@ export default new Vuex.Store({
     },
     set_name (set, uName) {
       set.commit('setName', uName);
+    },
+    set_avator (set, avator) {
+      set.commit('setAvator', avator);
     },
   },
   modules: {}

@@ -6,7 +6,7 @@
     <div class="flex flex-row card">
         <div class="flex flex-col avator">
           <img src="../assets/avator/1.jpg" alt="">
-          <span @click="dialogVisible = true">修改头像</span>
+          <span @click="Open">修改头像</span>
           <div class="flex flex-row jy-center fans_row">
             <span class="guan">关注<br>{{ this.guan }}</span>
             <span class="fen">粉丝<br>{{ this.fen }}</span>
@@ -54,7 +54,7 @@
         </div>
     </div>
     <div>
-      <button class="button main" @click="Edit" v-if="!isEdit">编辑资料</button>
+      <button class="button main" @click="isEdit = true" v-if="!isEdit">编辑资料</button>
       <button class="button main" @click="Submit" v-else>提交</button>
       <button class="button exit" v-if="isEdit" @click="Exit">取消编辑</button>
     </div>
@@ -63,14 +63,20 @@
       :visible.sync="dialogVisible"
       width="600px">
       <div class="flex flex-col win">
-        <div
-        v-for="it in avs"
-        :key="it"
-        class="flex flex-row">
-          <img :src="it.src" alt="">
+        <div class="flex flex-row">
+          <img
+          v-for="(it, index) in avs"
+          :key="it.src"
+          :src="it.src"
+          @click="SubmitAvator(index + 1)"
+          :class="{active:num === index + 1}">
         </div>
         <div class="flex flex-row">
-          <img src="../assets/avator/6.jpg" alt=""><img src="../assets/avator/7.jpg" alt=""><img src="../assets/avator/8.jpg" alt=""><img src="../assets/avator/9.jpg" alt=""><img src="../assets/avator/10.jpg" alt="">
+          <img
+          v-for="(it, index) in avs2"
+          :key="it.src"
+          :src="it.src"
+          @click="SubmitAvator(index + 6)">
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -100,12 +106,20 @@ export default {
       portrait: 1,
       guan: 0,
       fen: 0,
+      num: 0,
       avs: [
         { src: require('../assets/avator/1.jpg') },
         { src: require('../assets/avator/2.jpg') },
         { src: require('../assets/avator/3.jpg') },
         { src: require('../assets/avator/4.jpg') },
         { src: require('../assets/avator/5.jpg') },
+      ],
+      avs2: [
+        { src: require('../assets/avator/6.jpg') },
+        { src: require('../assets/avator/7.jpg') },
+        { src: require('../assets/avator/8.jpg') },
+        { src: require('../assets/avator/9.jpg') },
+        { src: require('../assets/avator/10.jpg') },
       ],
 
       isEdit: false,
@@ -116,11 +130,17 @@ export default {
   created () {
     this.GetInfo();
     this.GetCount();
+    this.num = this.portrait;
   },
 
   methods: {
-    Edit () {
-      this.isEdit = true;
+    Open () {
+      this.dialogVisible = true;
+      this.num = this.portrait;
+    },
+    SubmitAvator (index) {
+      console.log(index);
+      this.num = index;
     },
     // 获取资料
     async GetInfo () {
@@ -137,6 +157,8 @@ export default {
           this.birth = infodata.birth;
           this.level = infodata.level;
           this.intro = infodata.information;
+          this.portrait = parseInt(infodata.portrait, 10);
+          this.$store.dispatch('set_avator', this.portrait);
         } else {
           this.$message({
             type: 'success',
@@ -267,6 +289,9 @@ export default {
   }
   button.exit {
     background-color: lightgrey;
+  }
+  .active {
+    border: 2px solid lightcoral;
   }
 }
 </style>

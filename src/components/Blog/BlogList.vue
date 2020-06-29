@@ -108,7 +108,6 @@ export default {
     // 查看博客
     ToDetail (blog) {
       const blogId = blog.blog_id;
-      this.$store.dispatch('set_blog', blog);
       const { href } = this.$router.resolve({
         path: '/blogDetail',
         query: { blogId: blogId }

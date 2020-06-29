@@ -15,7 +15,7 @@
         <el-divider></el-divider>
         <div class="flex flex-col answers">
           <div class="flex flex-row answer_row">
-            <img src="../../assets/avator/1.jpg" alt="">
+            <img :src="this.Url" alt="">
             <div class="flex flex-col left_row">
               <span>我猜你这次是不小心忘记啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊</span>
               <div class="flex flex-row like_row">
@@ -54,12 +54,15 @@ export default {
       isLike: false,
       content: '',
       quesId: 0,
+      Url: '',
     };
   },
   computed: {
     ...mapState(['uId']),
+    ...mapState(['avator']),
   },
   created () {
+    this.Url = require(`../../assets/avator/${this.avator}.jpg`);
     this.quesId = this.$route.query.questionId;
     console.log(this.quesId);
     this.GetDetail();
