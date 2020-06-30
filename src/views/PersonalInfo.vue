@@ -76,12 +76,13 @@
           v-for="(it, index) in avs2"
           :key="it.src"
           :src="it.src"
-          @click="SubmitAvator(index + 6)">
+          @click="SubmitAvator(index + 6)"
+          :class="{active:num === index + 6}">
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="UpdateAvator">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -139,7 +140,6 @@ export default {
       this.num = this.portrait;
     },
     SubmitAvator (index) {
-      console.log(index);
       this.num = index;
     },
     // 获取资料
@@ -183,6 +183,30 @@ export default {
         const info = res.data;
         if (info.code === 200) {
           this.isEdit = false;
+        } else {
+          this.$message({
+            type: 'success',
+            message: info.message,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    // 编辑头像
+    async UpdateAvator () {
+      try {
+        console.log(this.num);
+        const res = await this.$axios.post('/updatePortrait', {
+          portrait: JSON.stringify(this.num),
+        });
+        const info = res.data;
+        if (info.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '更换成功！',
+          });
+          this.dialogVisible = false;
         } else {
           this.$message({
             type: 'success',

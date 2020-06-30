@@ -94,6 +94,7 @@ export default {
 <style lang="less" scoped>
 #login {
   color: rgb(217, 171, 66);
+  position: absolute;
   background: linear-gradient(#aac9ce, #f3dbcf);
 
   .login_box {

@@ -176,6 +176,7 @@ export default {
 <style lang="less" scoped>
 #register{
   background: url('../assets/register.png');
+  position: absolute;
 
     .title {
       margin-top: 100px;
