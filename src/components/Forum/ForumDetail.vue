@@ -188,22 +188,20 @@ export default {
         console.log(err);
       }
     },
-    async ChangeComLike (type) {
+    async ChangeComLike (id, type) {
       try {
-        const res = await this.$axios.post('/updateQuestionLike', {
+        const res = await this.$axios.post('/changeAnswerLike', {
           u_id: this.uId,
-          question_id: this.quesId,
+          answer_id: id,
           typeOfLike: type,
         });
         const info = res.data;
         if (info.code === 200) {
-          if (type === 'add') {
-            this.isLike = 'true';
-            this.likeNum = this.likeNum + 1;
-          } else {
-            this.isLike = 'false';
-            this.likeNum = this.likeNum - 1;
-          }
+          this.Refresh();
+          this.$message({
+            type: 'success',
+            message: '操作成功',
+          });
         } else if (info.code === 409) {
           this.sessionJudge();
         } else {

@@ -1,57 +1,60 @@
 <template>
-    <div id="security" class="flex flex-row jy-center">
-        <div class="flex flex-col center">
-            <div class="flex flex-row">
-                <b>密保邮箱</b>
-                <b>{{ this.email }}</b>
-            </div>
-            <div class="flex flex-row row" v-if="!isOk">
-                <input type="text" class="input-underline">
-                <button class="button" @click="SendCode" v-if="!isSend">获取验证码</button>
-                <button class="button" disabled v-else>{{ this.sec }}s</button>
-            </div>
-            <div class="flex flex-col change_box" v-if="isOk">
-                <label @click="ShowItem('pwd')" :class="{active:pwdShow}">
-                    <i class="el-icon-warning"></i>
-                    修改密码
-                </label>
-                <div class="flex flex-col change_row" v-if="pwdShow">
-                    <div class="flex flex-row">
-                        <input type="password" v-model="newPwd" class="input-underline" placeholder="新密码...">
-                        <span v-if=" newPwd && newPwd.length < 8"><i class="el-icon-warning"></i>密码少于8位！</span>
-                    </div>
-                    <div class="flex flex-row">
-                        <input type="password" id="newPwdB" v-model="newPwdB" class="input-underline" placeholder="确认密码...">
-                        <span v-if="newPwdB && newPwdB !== newPwd"><i class="el-icon-warning"></i>两次输入不一致！</span>
-                    </div>
-                    <div class="flex flex-row">
-                        <button class="button" @click="SubmitPwd"><i class="el-icon-upload2"></i>提交</button>
-                        <span class="return" @click="Return('pwd')">
-                        <i class="el-icon-circle-close"></i>取消
-                        </span>
-                    </div>
-                </div>
-                <label @click="ShowItem('email')" :class="{active:emailShow}">
-                    <i class="el-icon-warning"></i>
-                    修改邮箱
-                </label>
-                <div class="flex flex-col change_row" v-if="emailShow">
-                    <div class="flex flex-row">
-                        <input type="text" v-model="newEmail" class="input-underline" placeholder="新邮箱...">
-                        <button class="button" @click="Check" v-if="!isSend">获取验证码</button>
-                        <button class="button" disabled v-else>{{ this.sec }}s</button>
-                    </div>
-                    <input type="text" v-model="newCode" class="input-underline" placeholder="验证码...">
-                    <div class="flex flex-row">
-                        <button class="button"><i class="el-icon-upload2"></i>提交</button>
-                        <span class="return" @click="Return('email')">
-                        <i class="el-icon-circle-close"></i>取消
-                        </span>
-                    </div>
-                </div>
+  <div id="security" class="flex flex-row jy-center">
+    <div class="flex flex-col center">
+      <div class="flex flex-row">
+        <b>密保邮箱</b>
+        <b>{{ this.email }}</b>
+        <div v-if="!isCheck">
+          <button class="button" @click="SendCode" v-if="!isSend">获取验证码</button>
+          <button class="button" disabled v-else>{{ this.sec }}s</button>
         </div>
+      </div>
+      <div class="flex flex-row row" v-if="!isOk">
+        <input type="text" class="input-underline" v-model="code">
+        <button class="button sub" @click="SubmitCode">提交验证码</button>
+      </div>
+      <div class="flex flex-col change_box" v-if="isOk">
+        <label @click="ShowItem('pwd')" :class="{active:pwdShow}">
+          <i class="el-icon-warning"></i>
+          修改密码
+        </label>
+        <div class="flex flex-col change_row" v-if="pwdShow">
+          <div class="flex flex-row">
+            <input type="password" v-model="newPwd" class="input-underline" placeholder="新密码...">
+            <span v-if=" newPwd && newPwd.length < 8"><i class="el-icon-warning"></i>密码少于8位！</span>
+          </div>
+          <div class="flex flex-row">
+            <input type="password" id="newPwdB" v-model="newPwdB" class="input-underline" placeholder="确认密码...">
+            <span v-if="newPwdB && newPwdB !== newPwd"><i class="el-icon-warning"></i>两次输入不一致！</span>
+          </div>
+          <div class="flex flex-row">
+            <button class="button" @click="SubmitPwd"><i class="el-icon-upload2"></i>提交</button>
+            <span class="return" @click="Return('pwd')">
+            <i class="el-icon-circle-close"></i>取消
+            </span>
+          </div>
         </div>
+        <label @click="ShowItem('email')" :class="{active:emailShow}">
+          <i class="el-icon-warning"></i>
+          修改邮箱
+        </label>
+        <div class="flex flex-col change_row" v-if="emailShow">
+          <div class="flex flex-row">
+            <input type="text" v-model="newEmail" class="input-underline" placeholder="新邮箱...">
+            <button class="button" @click="Check" v-if="!isSend">获取验证码</button>
+            <button class="button" disabled v-else>{{ this.sec }}s</button>
+          </div>
+          <input type="text" v-model="newCode" class="input-underline" placeholder="验证码...">
+          <div class="flex flex-row">
+            <button class="button"><i class="el-icon-upload2"></i>提交</button>
+            <span class="return" @click="Return('email')">
+            <i class="el-icon-circle-close"></i>取消
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -69,7 +72,9 @@ export default {
       newPwdB: '',
       newEmail: '',
       newCode: '',
+      code: '',
       isOk: false,
+      isCheck: false,
 
       isSend: false,
       sec: 60,
@@ -95,6 +100,29 @@ export default {
           this.$message({
             type: 'error',
             message: info.message,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    // 提交验证码
+    async SubmitCode () {
+      try {
+        const res = await this.$axios.post('/checkCode', {
+          email: this.email,
+          verifyCode: this.code
+        });
+        const info = res.data;
+        if (info.code === 200) {
+          this.isOk = true;
+          this.isCheck = true;
+        } else if (info.code === 409) {
+          this.sessionJudge();
+        } else {
+          this.$message({
+            type: 'error',
+            message: info.message
           });
         }
       } catch (err) {
@@ -263,6 +291,9 @@ export default {
     }
     button {
         background-color:darksalmon;
+    }
+    button.sub {
+        background-color:darkseagreen;
     }
     .change_box {
         text-align: left;

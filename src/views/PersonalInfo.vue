@@ -5,9 +5,9 @@
     </div>
     <div class="flex flex-row card">
         <div class="flex flex-col avator">
-          <img src="../assets/avator/1.jpg" alt="">
+          <img :src="Url" alt="">
           <span @click="Open">修改头像</span>
-          <div class="flex flex-row jy-center fans_row">
+          <div class="flex flex-row jy-center fans_row" @click="Locate('/relatives')">
             <span class="guan">关注<br>{{ this.guan }}</span>
             <span class="fen">粉丝<br>{{ this.fen }}</span>
           </div>
@@ -108,6 +108,7 @@ export default {
       guan: 0,
       fen: 0,
       num: 0,
+      Url: '',
       avs: [
         { src: require('../assets/avator/1.jpg') },
         { src: require('../assets/avator/2.jpg') },
@@ -157,8 +158,9 @@ export default {
           this.birth = infodata.birth;
           this.level = infodata.level;
           this.intro = infodata.information;
-          this.portrait = parseInt(infodata.portrait, 10);
-          this.$store.dispatch('set_avator', this.portrait);
+          this.portrait = infodata.portrait;
+          this.Url = require(`../assets/avator/${this.portrait}.jpg`);
+          this.$store.dispatch('set_avator', infodata.portrait);
         } else {
           this.$message({
             type: 'success',
@@ -198,7 +200,8 @@ export default {
       try {
         console.log(this.num);
         const res = await this.$axios.post('/updatePortrait', {
-          portrait: JSON.stringify(this.num),
+          u_id: this.uId,
+          portrait: this.num,
         });
         const info = res.data;
         if (info.code === 200) {
@@ -206,7 +209,10 @@ export default {
             type: 'success',
             message: '更换成功！',
           });
+          this.Url = require(`../assets/avator/${this.num}.jpg`);
+          this.$store.dispatch('set_avator', this.num);
           this.dialogVisible = false;
+          this.$router.go(0);
         } else {
           this.$message({
             type: 'success',

@@ -21,7 +21,7 @@ export default new Vuex.Store({
       state.uName = uName;
     },
     setAvator (state, avator) {
-      state.uName = avator;
+      state.avator = avator;
     },
   },
   actions: {
