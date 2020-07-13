@@ -92,72 +92,72 @@ export default {
 
 <style lang="less" scoped>
 #personalBlog {
-    margin-top: 110px;
-    .center {
-        margin-left: 450px;
-        width: 50%;
+  margin-top: 110px;
+  .center {
+    margin-left: 450px;
+    width: 50%;
 
-        .order {
-            height: 40px;
-            background-color: #E9E9EA;
-            line-height: 40px;
+    .order {
+      height: 40px;
+      background-color: #E9E9EA;
+      line-height: 40px;
 
-            label {
-                margin-left: 2%;
-                font-size: 90%;
-                margin-right: 3%;
-                cursor: pointer;
-            }
-            label[name="order"] {
-                margin-right: 4%;
-                cursor: default;
-            }
-            label[name="time"]:hover,
-            label[name="like"]:hover {
-                color: #BC3520;
-            }
-            .all {
-                float: right;
-            }
-        }
-    }
-    .left {
-        width: 300px;
-        margin-left: 50px;
-        position: fixed;
-        padding: 10px 20px;
-        background-color: #F7F7F7;
-        box-shadow: 3px 3px 3px #D9D9D9;
-
-        .row {
-            margin: 20px 0;
-        }
-        label {
-            margin: 5px;
-        }
-        label[name="blog"] {
-            margin-right: 30px;
-        }
-        label[name="tag"] {
-            width: 100px;
-            margin-left: 20px;
-            cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 2px;
-        }
-        label[name="tag"]:hover {
-            color: #BC3520;
-        }
-        .tag_row {
-            display: flex;
-            flex-direction: column;
-            i {
-                margin-right: 5px;
-            }
-        }
-    }
-    .active {
+      label {
+        margin-left: 2%;
+        font-size: 90%;
+        margin-right: 3%;
+        cursor: pointer;
+      }
+      label[name="order"] {
+        margin-right: 4%;
+        cursor: default;
+      }
+      label[name="time"]:hover,
+      label[name="like"]:hover {
         color: #BC3520;
+      }
+      .all {
+        float: right;
+      }
     }
+  }
+  .left {
+    width: 300px;
+    margin-left: 50px;
+    position: fixed;
+    padding: 10px 20px;
+    background-color: #F7F7F7;
+    box-shadow: 3px 3px 3px #D9D9D9;
+
+    .row {
+      margin: 20px 0;
+    }
+    label {
+      margin: 5px;
+    }
+    label[name="blog"] {
+      margin-right: 30px;
+    }
+    label[name="tag"] {
+      width: 100px;
+      margin-left: 20px;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 2px;
+    }
+    label[name="tag"]:hover {
+      color: #BC3520;
+    }
+    .tag_row {
+      display: flex;
+      flex-direction: column;
+      i {
+        margin-right: 5px;
+      }
+    }
+  }
+  .active {
+    color: #BC3520;
+  }
 }
 </style>

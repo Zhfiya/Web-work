@@ -185,7 +185,7 @@ export default {
 
 <style lang="less" scoped>
 #forum {
-  height: auto;
+  height: 120%;
   margin-top: 60px;
   background-color: #f5f6f7;
   position: absolute;
