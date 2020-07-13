@@ -5,6 +5,7 @@
                 <label name="blog"><i class="el-icon-notebook-2"></i>博客：{{ this.blogNum }}</label>
                 <label><i class="el-icon-star-on"></i>获赞：{{ this.likeNum}}</label>
             </div>
+            <StarBlogs />
         </div>
         <div class="center flex flex-col">
             <div class="order flex flex-row">
@@ -28,11 +29,13 @@
 
 <script>
 import BlogList from './BlogList';
+import StarBlogs from './StarBlogs';
 
 export default {
   name: 'personalBlog',
   components: {
-    BlogList // 博客列表
+    BlogList, // 博客列表
+    StarBlogs, // 收藏博客
   },
 
   data () {

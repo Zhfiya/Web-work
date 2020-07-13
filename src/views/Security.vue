@@ -46,7 +46,7 @@
           </div>
           <input type="text" v-model="newCode" class="input-underline" placeholder="验证码...">
           <div class="flex flex-row">
-            <button class="button"><i class="el-icon-upload2"></i>提交</button>
+            <button class="button" @click="SubmitNewEmail"><i class="el-icon-upload2"></i>提交</button>
             <span class="return" @click="Return('email')">
             <i class="el-icon-circle-close"></i>取消
             </span>
@@ -250,7 +250,8 @@ export default {
         this.pwdShow = true;
       } else {
         this.emailShow = true;
-        console.log('email');
+        this.isSend = false;
+        this.sec = 60;
       }
     },
 

@@ -7,7 +7,7 @@
           <div class="flex flex-row like_row">
             <img src="../../assets/dislike.png" alt="" v-if="isLike === 'false'" @click="ChangeLike('add')">
             <img src="../../assets/like.png" alt="" v-if="isLike === 'true'" @click="ChangeLike('reduce')">
-            <span>({{ this.likeNum }})</span>
+            <span>({{ this.likeNum }})点赞</span>
           </div>
           <!-- <div class="flex.flex-row jy-start star" @click="ChangeLike">
               <i class="el-icon-star-off" v-if="!isLike"></i>
@@ -76,11 +76,12 @@ export default {
   computed: {
     ...mapState(['uId']),
     ...mapState(['avator']),
+    ...mapState(['uName']),
   },
   created () {
     this.Url = require(`../../assets/avator/${this.avator}.jpg`);
     this.quesId = this.$route.query.questionId;
-    console.log(this.quesId);
+    console.log(this.uName);
     this.GetDetail();
     this.GetComment();
   },
