@@ -41,14 +41,12 @@
       <div class="center_box">
         <div class="flex flex-row title jy-between">
             <span>热帖·技术区</span>
-            <span class="more">更多</span>
         </div>
         <ForumList :tag="tag1"/>
       </div>
       <div class="center_box">
         <div class="flex flex-row title jy-between">
             <span>热帖·非技术区</span>
-            <span class="more">更多</span>
         </div>
         <ForumList :tag="tag2"/>
       </div>
@@ -57,7 +55,6 @@
       <div class="center_box">
         <div class="flex flex-row title jy-between">
             <span>热帖·{{ this.type }}</span>
-            <span class="more">更多</span>
         </div>
         <ForumList :tag="type"/>
       </div>
@@ -66,7 +63,6 @@
       <div class="center_box">
         <div class="flex flex-row title jy-between">
             <span>热帖·{{ this.select }}</span>
-            <span class="more">更多</span>
         </div>
         <ForumList :res="selectRes"/>
       </div>
@@ -133,9 +129,6 @@ export default {
       this.select = '';
       this.selectRes = [];
       this.type = type;
-      if (this.type === 'star') {
-        this.getUserQuesCollection();
-      }
       this.Refresh();
     },
     Refresh () {
@@ -156,28 +149,6 @@ export default {
       try {
         const res = await this.$axios.post('/getQuestionByContent', {
           content: this.select,
-        });
-        const info = res.data;
-        if (info.code === 200) {
-          this.type = '';
-          this.selectRes = info.data;
-          if (info.data.length === 0) {
-            this.$message({
-              type: 'error',
-              message: '暂无帖子',
-            });
-          } else {
-            this.Refresh();
-          }
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    async getUserQuesCollection () {
-      try {
-        const res = await this.$axios.post('/getUserQuesCollection', {
-          u_id: this.uId,
         });
         const info = res.data;
         if (info.code === 200) {

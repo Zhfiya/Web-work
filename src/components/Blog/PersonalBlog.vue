@@ -34,8 +34,11 @@
       :key="item.collection_id"
       class="list_item">
       <div class="flex flex-col">
-        <span>{{ item.collection_name }}</span>
-        <span class="time">收藏时间{{ item.collection_time }}</span>
+        <span @click="GetDetail(item.content_id)">{{ item.collection_name }}</span>
+        <div class="flex flex-row jy-between">
+          <span class="time">收藏时间{{ item.collection_time }}</span>
+          <span class="time" @click="DeleteStar(item.collection_id)">取消收藏</span>
+        </div>
       </div>
       </div>
       <i class="el-icon-d-arrow-left" @click="Back">显示我的博客</i>
@@ -116,7 +119,50 @@ export default {
     // 显示我的博客
     Back () {
       this.favoriteList = null;
-    }
+    },
+
+    // 跳转博客详情
+    GetDetail (id) {
+      const { href } = this.$router.resolve({
+        path: '/blogDetail',
+        query: { blogId: id }
+      });
+      window.open(href, '_blank');
+    },
+
+    // 取消收藏
+    async DeleteStar (id) {
+      this.$confirm('是否取消收藏该帖子？', '确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        try {
+          const res = await this.$axios.post('/deleteCollection', {
+            collection_id: id,
+          });
+          const info = res.data;
+          if (info.code === 200) {
+            this.$message({
+              type: 'error',
+              message: '取消收藏',
+            });
+          } else {
+            this.$message({
+              type: 'error',
+              message: info.data,
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消操作'
+        });
+      });
+    },
   }
 };
 </script>
@@ -157,8 +203,9 @@ export default {
     margin-left: 450px;
 
     .list_item {
+      cursor: pointer;
       width: 800px;
-      margin-top: 20px;
+      margin-bottom: 20px;
       background-color:lightyellow;
       padding: 20px;
       span {

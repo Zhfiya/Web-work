@@ -215,6 +215,7 @@ export default {
                 type: 'success',
                 message: '删除成功!'
               });
+              this.list = [];
               this.Refresh();
             } else if (info.code === 409) {
               this.sessionJudge();

@@ -8,12 +8,8 @@
             <img src="../../assets/dislike.png" alt="" v-if="isLike === 'false'" @click="ChangeLike('add')">
             <img src="../../assets/like.png" alt="" v-if="isLike === 'true'" @click="ChangeLike('reduce')">
             <span>({{ this.likeNum }})点赞</span>
+            <span class="star" @click="AddStar">收藏</span>
           </div>
-          <!-- <div class="flex.flex-row jy-start star" @click="ChangeLike">
-              <i class="el-icon-star-off" v-if="!isLike"></i>
-              <i class="el-icon-star-on" v-if="isLike"></i>
-              收藏
-          </div> -->
         </div>
         <div class="flex flex-row">
           <span>提问人：{{ this.author }}</span>
@@ -34,6 +30,7 @@
               <img src="../../assets/like.png" alt="" v-if="item.is_like" @click="ChangeComLike(item.answer_id, 'reduce')">
               <span>({{ item.like_num }})点赞</span>
               <span>{{ item.pass_time }}</span>
+              <span class="delete" @click="DeleteComment(item.answer_id)" v-if="item.is_person">删除</span>
             </div>
           </div>
         </div>
@@ -148,6 +145,7 @@ export default {
             type: 'success',
             message: '评论成功',
           });
+          this.content = '';
           this.Refresh();
         } else if (info.code === 409) {
           this.sessionJudge();
@@ -215,6 +213,66 @@ export default {
         console.log(err);
       }
     },
+    async DeleteComment (id) {
+      try {
+        const res = await this.$axios.post('/deleteAnswer', {
+          answer_id: id,
+        });
+        const info = res.data;
+        if (info.code === 200) {
+          this.list = [];
+          this.Refresh();
+          this.$message({
+            type: 'success',
+            message: '删除成功',
+          });
+        } else if (info.code === 409) {
+          this.sessionJudge();
+        } else {
+          this.$message({
+            type: 'warning',
+            message: info.message,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async AddStar () {
+      this.$confirm('是否收藏该帖子？', '确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        try {
+          const res = await this.$axios.post('/collectQuestion', {
+            u_id: this.uId,
+            question_id: this.quesId,
+          });
+          const info = res.data;
+          if (info.code === 200) {
+            this.$message({
+              type: 'success',
+              message: '收藏成功',
+            });
+          } else if (info.code === 409) {
+            this.sessionJudge();
+          } else {
+            this.$message({
+              type: 'warning',
+              message: info.message,
+            });
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消收藏'
+        });
+      });
+    }
   },
 };
 </script>
@@ -285,6 +343,9 @@ export default {
         color: #e8989a;
         margin-right: 20px;
       }
+      span.star {
+        cursor: pointer;
+      }
     }
     .write {
       margin-top: 50px;
@@ -299,6 +360,9 @@ export default {
         width: 100px;
         background-color:darkseagreen;
       }
+    }
+    .delete {
+      cursor: pointer;
     }
   }
 }
