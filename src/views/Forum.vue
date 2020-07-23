@@ -101,6 +101,7 @@
 
 <script>
 import ForumList from '../components/Forum/ForumList';
+import { mapState } from 'vuex';
 
 export default {
   name: 'forum',
@@ -121,6 +122,9 @@ export default {
       update: true,
     };
   },
+  computed: {
+    ...mapState(['uId']),
+  },
   created () {
     this.GetRank();
   },
@@ -129,6 +133,9 @@ export default {
       this.select = '';
       this.selectRes = [];
       this.type = type;
+      if (this.type === 'star') {
+        this.getUserQuesCollection();
+      }
       this.Refresh();
     },
     Refresh () {
@@ -149,6 +156,28 @@ export default {
       try {
         const res = await this.$axios.post('/getQuestionByContent', {
           content: this.select,
+        });
+        const info = res.data;
+        if (info.code === 200) {
+          this.type = '';
+          this.selectRes = info.data;
+          if (info.data.length === 0) {
+            this.$message({
+              type: 'error',
+              message: '暂无帖子',
+            });
+          } else {
+            this.Refresh();
+          }
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getUserQuesCollection () {
+      try {
+        const res = await this.$axios.post('/getUserQuesCollection', {
+          u_id: this.uId,
         });
         const info = res.data;
         if (info.code === 200) {

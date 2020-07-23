@@ -2,7 +2,8 @@
   <div id="blogDetail" class="flex flex-col" v-if="update">
     <div class="center flex flex-col">
       <label class="title flex">{{ this.title }}</label>
-      <div class="row flex flex-row">
+      <div class="row flex flex-row jy-between">
+        <div>
           <span class="tag">{{ this.tag }}</span>
           <span class="author">{{ this.author }}</span>
           <span>发布于{{ this.uploadTime }}</span>
@@ -11,6 +12,8 @@
             <i @click="Star('reduce')" class="el-icon-star-on" v-if="isLike === 'true'"></i>
             <i @click="Star('add')" class="el-icon-star-off" v-else></i>
           </span>
+        </div>
+        <span class="star" @click="GetFolder">收藏</span>
       </div>
       <div class="flex contents" v-html="content"></div>
     </div>
@@ -56,6 +59,29 @@
         <button class="button" @click="SubmitComment">提交</button>
       </div>
     </div>
+    <el-dialog
+      title="选择收藏夹"
+      :visible.sync="dialogVisible"
+      width="30%"
+      class="dialog">
+      <div class="flex flex-col">
+        <div
+        v-for="(item, index) in Folder"
+        :key="item.favorites_id"
+        class="flex flex-col it"
+        :class="{active:selectIndex === index}">
+          <div class="floder_row" @click="SelectFolder(index, item)">
+            <i class="el-icon-folder-opened" v-if="!item.is_null"></i>
+            <i class="el-icon-folder" v-else></i>
+            {{ item.favorites_name }}
+          </div>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="Collect">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -78,8 +104,12 @@ export default {
       list: [],
       discontent: '',
       author_id: 0,
+      Folder: [],
+      selectIndex: -1,
+      selectIId: -1,
 
       update: true,
+      dialogVisible: false,
     };
   },
 
@@ -251,6 +281,57 @@ export default {
         console.log(err);
       }
     },
+    // 获取收藏夹
+    async GetFolder () {
+      try {
+        const res = await this.$axios.post('/getUserFavorites', {
+          u_id: this.uId,
+        });
+        const info = res.data;
+        if (info.code === 200) {
+          this.Folder = info.data;
+          this.dialogVisible = true;
+        } else {
+          this.$message({
+            type: 'error',
+            message: info.message,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    SelectFolder (index, item) {
+      this.selectIndex = index;
+      this.selectIId = item.favorites_id;
+    },
+    async Collect () {
+      try {
+        const res = await this.$axios.post('/collectObject', {
+          u_id: this.uId,
+          favorites_id: this.selectIId,
+          content_id: this.blogId,
+          item: 'blog',
+          collection_name: this.title,
+        });
+        const info = res.data;
+        if (info.code === 200) {
+          this.$message({
+            type: 'success',
+            message: '收藏成功！',
+          });
+          this.dialogVisible = true;
+          this.dialogVisible = false;
+        } else {
+          this.$message({
+            type: 'error',
+            message: info.message,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
   }
 };
 </script>
@@ -262,6 +343,18 @@ export default {
     margin-left: 15%;
     width: 70%;
 
+  .dialog {
+    text-align: left;
+    .it {
+      margin: 10px 0;
+    }
+    .floder_row {
+      cursor: pointer;
+    }
+    .active {
+      color: brown;
+    }
+  }
   .center {
     padding: 30px;
     background-color: #F3F3F4;
@@ -295,6 +388,9 @@ export default {
         margin-left: 5px;
         cursor: pointer;
       }
+    }
+    .star {
+      cursor: pointer;
     }
     .contents {
       text-align: left;

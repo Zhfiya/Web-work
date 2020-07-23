@@ -2,36 +2,37 @@
   <div id="starBlogs" class="flex flex-row jy-start blogs" v-if="update">
       <div class="flex flex-col">
         <div class="flex flex-row jy-between row">
-            <i class="el-icon-folder-opened">收藏夹列表</i>
-            <el-popover
-            placement="right"
-            width="300"
-            trigger="click">
-            <el-input v-model="addName"></el-input>
-            <el-button @click="AddFolder" size="small" type="info" plain>add</el-button>
-            <span slot="reference"><i class="el-icon-folder-add"></i>创建收藏夹</span>
-            </el-popover>
+          <i class="el-icon-folder-opened">收藏夹列表</i>
+          <el-popover
+          placement="right"
+          width="300"
+          trigger="click">
+          <el-input v-model="addName"></el-input>
+          <el-button @click="AddFolder" size="small" type="info" plain>add</el-button>
+          <span slot="reference"><i class="el-icon-folder-add"></i>创建收藏夹</span>
+          </el-popover>
         </div>
         <div
         v-for="(item, index) in Folder"
         :key="item.favorites_id"
         class="flex flex-col it">
-            <div class="flex flex-row jy-betwwen">
-                <div class="floder_row">
-                    <i class="el-icon-folder-opened"></i>
-                    {{ item.favorites_name }}
-                </div>
-                <el-popover
-                placement="right"
-                width="300"
-                trigger="click"
-                v-if="index !== 0">
-                <el-input v-model="newName"></el-input>
-                <el-button @click="EditFolder(item.favorites_id)" size="small" type="success" plain>修改收藏夹名字</el-button>
-                <span slot="reference"><i class="el-icon-edit"></i></span>
-                </el-popover>
-                <i class="el-icon-circle-close" @click="DeleteFolder(item.favorites_id)" v-if="index !== 0"></i>
+          <div class="flex flex-row jy-betwwen">
+            <div class="floder_row" @click="GetFoldDetail(item.favorites_id)">
+              <i class="el-icon-folder-opened" v-if="!item.is_null"></i>
+              <i class="el-icon-folder" v-else></i>
+              {{ item.favorites_name }}
             </div>
+            <el-popover
+            placement="right"
+            width="300"
+            trigger="click"
+            v-if="index !== 0">
+            <el-input v-model="newName"></el-input>
+            <el-button @click="EditFolder(item.favorites_id)" size="small" type="success" plain>修改收藏夹名字</el-button>
+            <span slot="reference"><i class="el-icon-edit"></i></span>
+            </el-popover>
+            <i class="el-icon-circle-close" @click="DeleteFolder(item.favorites_id)" v-if="index !== 0"></i>
+          </div>
         </div>
       </div>
   </div>
@@ -49,6 +50,7 @@ export default {
       Folder: [],
       addName: '',
       newName: '',
+      favoritesList: [],
 
       update: true,
     };
@@ -175,6 +177,29 @@ export default {
         });
       });
     },
+    async GetFoldDetail (id) {
+      try {
+        const res = await this.$axios.post('/getFavoritesCollection', {
+          favorites_id: id,
+        });
+        const info = res.data;
+        if (info.code === 200) {
+          this.favoritesList = info.data;
+          if (!this.favoritesList) {
+            this.favoritesList = 'no collects';
+          }
+          // 传值给父组件
+          this.$emit('func', this.favoritesList);
+        } else {
+          this.$message({
+            type: 'error',
+            message: info.message,
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
   }
 };
 </script>

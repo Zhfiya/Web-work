@@ -1,30 +1,46 @@
 <template>
-    <div id="personalBlog" class="flex flex-row">
-        <div class="left">
-            <div class="flex flex-row row">
-                <label name="blog"><i class="el-icon-notebook-2"></i>博客：{{ this.blogNum }}</label>
-                <label><i class="el-icon-star-on"></i>获赞：{{ this.likeNum}}</label>
-            </div>
-            <StarBlogs />
+  <div id="personalBlog" class="flex flex-row">
+    <div class="left">
+        <div class="flex flex-row row">
+            <label name="blog"><i class="el-icon-notebook-2"></i>博客：{{ this.blogNum }}</label>
+            <label><i class="el-icon-star-on"></i>获赞：{{ this.likeNum}}</label>
         </div>
-        <div class="center flex flex-col">
-            <div class="order flex flex-row">
-                <label name="order">排序：</label>
-                <label name="time" :class="{active:order === 'time'}" @click="OrderSelect('time')">
-                    时间
-                    <i class="el-icon-caret-bottom" v-if="this.timeOrder === 'new'"></i>
-                    <i class="el-icon-caret-top" v-else></i>
-                </label>
-                <label name="like" :class="{active:order === 'like'}" @click="OrderSelect('like')">
-                    获赞量
-                </label>
-                <label class="all" @click="SelectType('all')" v-if="type !== 'all'">
-                    显示全部博客
-                </label>
-            </div>
-            <BlogList :type="type" :order="order" :typeOfTime="timeOrder" v-if="isBlog" @count="CountList"/>
-        </div>
+        <StarBlogs @func="GetList"/>
     </div>
+    <div class="center flex flex-col" v-if="!favoriteList">
+      <div class="order flex flex-row">
+        <label name="order">排序：</label>
+        <label name="time" :class="{active:order === 'time'}" @click="OrderSelect('time')">
+          时间
+          <i class="el-icon-caret-bottom" v-if="this.timeOrder === 'new'"></i>
+          <i class="el-icon-caret-top" v-else></i>
+        </label>
+        <label name="like" :class="{active:order === 'like'}" @click="OrderSelect('like')">
+          获赞量
+        </label>
+        <label class="all" @click="SelectType('all')" v-if="type !== 'all'">
+          显示全部博客
+        </label>
+      </div>
+      <BlogList :type="type" :order="order" :typeOfTime="timeOrder" v-if="isBlog" @count="CountList"/>
+    </div>
+    <div class="center_b flex flex-col" v-if="favoriteList === 'no collects'">
+      <span class="no">暂无收藏！</span>
+      <i class="el-icon-d-arrow-left" @click="Back">显示我的博客</i>
+    </div>
+    <div class="center_b" v-if="favoriteList && favoriteList !== 'no collects'">
+      <div
+      v-for="item in favoriteList"
+      :key="item.collection_id"
+      class="list_item">
+      <div class="flex flex-col">
+        <span>{{ item.collection_name }}</span>
+        <span class="time">收藏时间{{ item.collection_time }}</span>
+      </div>
+      </div>
+      <i class="el-icon-d-arrow-left" @click="Back">显示我的博客</i>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -44,10 +60,15 @@ export default {
       likeNum: '1000w+',
       type: 'all',
       order: 'time',
+      favoriteList: null,
 
       isBlog: true,
       timeOrder: 'new'
     };
+  },
+
+  created () {
+    console.log(this.favoriteList);
   },
 
   methods: {
@@ -82,9 +103,19 @@ export default {
 
     // 显示博客和点赞量
     CountList (data) {
-      console.log(data);
       this.blogNum = data.blogNum;
       this.likeNum = data.likeNum;
+    },
+
+    // 获取子组件的值
+    GetList (data) {
+      console.log(data);
+      this.favoriteList = data;
+    },
+
+    // 显示我的博客
+    Back () {
+      this.favoriteList = null;
     }
   }
 };
@@ -119,6 +150,32 @@ export default {
       .all {
         float: right;
       }
+    }
+  }
+  .center_b {
+    text-align: left;
+    margin-left: 450px;
+
+    .list_item {
+      width: 800px;
+      margin-top: 20px;
+      background-color:lightyellow;
+      padding: 20px;
+      span {
+        margin-bottom: 10px;
+      }
+      span.time {
+        font-size: 14px;
+        color: darkgray;
+      }
+    }
+    i {
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .no {
+      font-size: 20px;
+      color: brown;
     }
   }
   .left {
