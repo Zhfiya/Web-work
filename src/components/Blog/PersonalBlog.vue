@@ -24,24 +24,26 @@
       </div>
       <BlogList :type="type" :order="order" :typeOfTime="timeOrder" v-if="isBlog" @count="CountList"/>
     </div>
-    <div class="center_b flex flex-col" v-if="favoriteList === 'no collects'">
-      <span class="no">暂无收藏！</span>
-      <i class="el-icon-d-arrow-left" @click="Back">显示我的博客</i>
-    </div>
-    <div class="center_b" v-if="favoriteList && favoriteList !== 'no collects'">
-      <div
-      v-for="item in favoriteList"
-      :key="item.collection_id"
-      class="list_item">
-      <div class="flex flex-col">
-        <span @click="GetDetail(item.content_id)">{{ item.collection_name }}</span>
-        <div class="flex flex-row jy-between">
-          <span class="time">收藏时间{{ item.collection_time }}</span>
-          <span class="time" @click="DeleteStar(item.collection_id)">取消收藏</span>
+    <div v-if="update">
+      <div class="center_b flex flex-col" v-if="favoriteList === 'no collects'">
+        <span class="no">暂无收藏！</span>
+        <i class="el-icon-d-arrow-left" @click="Back">显示我的博客</i>
+      </div>
+      <div class="center_b" v-if="favoriteList && favoriteList !== 'no collects'">
+        <div
+        v-for="item in favoriteList"
+        :key="item.collection_id"
+        class="list_item">
+        <div class="flex flex-col">
+          <span @click="GetDetail(item.content_id)">{{ item.collection_name }}</span>
+          <div class="flex flex-row jy-between">
+            <span class="time">收藏时间{{ item.collection_time }}</span>
+            <span class="time" @click="DeleteStar(item.collection_id)">取消收藏</span>
+          </div>
         </div>
+        </div>
+        <i class="el-icon-d-arrow-left" @click="Back">显示我的博客</i>
       </div>
-      </div>
-      <i class="el-icon-d-arrow-left" @click="Back">显示我的博客</i>
     </div>
   </div>
 </template>
@@ -66,7 +68,8 @@ export default {
       favoriteList: null,
 
       isBlog: true,
-      timeOrder: 'new'
+      update: true,
+      timeOrder: 'new',
     };
   },
 
@@ -112,7 +115,6 @@ export default {
 
     // 获取子组件的值
     GetList (data) {
-      console.log(data);
       this.favoriteList = data;
     },
 
@@ -144,8 +146,15 @@ export default {
           const info = res.data;
           if (info.code === 200) {
             this.$message({
-              type: 'error',
+              type: 'success',
               message: '取消收藏',
+            });
+            this.update = false;
+            // 在组件移除后，重新渲染组件
+            // this.$nextTick可实现在DOM 状态更新后，执行传入的方法。
+            this.$nextTick(() => {
+              this.GetList();
+              this.update = true;
             });
           } else {
             this.$message({

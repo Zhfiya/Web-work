@@ -1,5 +1,5 @@
 <template>
-  <div id="forumList" class="flex flex-col">
+  <div id="forumList" class="flex flex-col" v-if="update">
     <div class="flex flex-row jy-start second">
       <span class="qtitle">标题</span>
       <span class="qauthor">提问人</span>
@@ -24,7 +24,7 @@
         <span class="qtitle" @click="GetDetail(item.question_id)"><span class="tag">{{ item.tag }} ` </span>{{ item .content }}</span>
         <span class="qauthor">{{ item.author_name }}</span>
         <span class="num">{{ item.like_num }}</span>
-        <span class="delete" @click="DeleteStar(item.question_id)">删除</span>
+        <span class="delete" @click="DeleteStar(item.qc_id)">取消</span>
       </div>
     </div>
     <div v-if="list.length > 0">
@@ -51,6 +51,7 @@ export default {
       currentPage: 1,
       totalCount: 0,
       pageSize: 10,
+      update: true,
     };
   },
   computed: {
@@ -161,25 +162,44 @@ export default {
       }
     },
     async DeleteStar (id) {
-      try {
-        const res = await this.$axios.post('/deleteQuesCollection', {
-          qc_id: id,
-        });
-        const info = res.data;
-        if (info.code === 200) {
-          this.$message({
-            type: 'error',
-            message: '取消收藏',
+      this.$confirm('是否取消收藏？', '确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        try {
+          const res = await this.$axios.post('/deleteQuesCollection', {
+            qc_id: id,
           });
-        } else {
-          this.$message({
-            type: 'error',
-            message: info.data,
-          });
+          const info = res.data;
+          if (info.code === 200) {
+            this.$message({
+              type: 'success',
+              message: '取消收藏',
+            });
+            this.update = false;
+            // 在组件移除后，重新渲染组件
+            // this.$nextTick可实现在DOM 状态更新后，执行传入的方法。
+            this.$nextTick(() => {
+              this.list = [];
+              this.getUserQuesCollection();
+              this.update = true;
+            });
+          } else {
+            this.$message({
+              type: 'error',
+              message: info.data,
+            });
+          }
+        } catch (err) {
+          console.log(err);
         }
-      } catch (err) {
-        console.log(err);
-      }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消操作'
+        });
+      });
     },
   },
 };

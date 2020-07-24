@@ -15,9 +15,10 @@
         <div
         v-for="(item, index) in Folder"
         :key="item.favorites_id"
-        class="flex flex-col it">
+        class="flex flex-col it"
+        :class="{active:name === item.favorites_name}">
           <div class="flex flex-row jy-betwwen">
-            <div class="floder_row" @click="GetFoldDetail(item.favorites_id)">
+            <div class="floder_row" @click="GetFoldDetail(item.favorites_id, item.favorites_name)">
               <i class="el-icon-folder-opened" v-if="!item.is_null"></i>
               <i class="el-icon-folder" v-else></i>
               {{ item.favorites_name }}
@@ -51,6 +52,7 @@ export default {
       addName: '',
       newName: '',
       favoritesList: [],
+      name: '',
 
       update: true,
     };
@@ -177,8 +179,9 @@ export default {
         });
       });
     },
-    async GetFoldDetail (id) {
+    async GetFoldDetail (id, name) {
       try {
+        this.name = name;
         const res = await this.$axios.post('/getFavoritesCollection', {
           favorites_id: id,
         });
@@ -206,30 +209,34 @@ export default {
 
 <style lang="less" scoped>
 #starBlogs{
-    .row {
-        width: 300px;
-        span {
-            font-size: 14px;
-            color: brown;
-            cursor: pointer;
-        }
+  .row {
+    width: 300px;
+    span {
+      font-size: 14px;
+      color: brown;
+      cursor: pointer;
+    }
+  }
+  i {
+    margin-top: 3px;
+  }
+  .it {
+    margin-left: 20px;
+    text-align: left;
+    margin-top: 20px;
+    .floder_row {
+      width: 250px;
+      font-size: 15px;
+      cursor: pointer;
     }
     i {
-        margin-top: 3px;
+      cursor: pointer;
+      margin-right: 5px;
     }
-    .it {
-        margin-left: 20px;
-        text-align: left;
-        margin-top: 20px;
-        .floder_row {
-            width: 250px;
-            font-size: 15px;
-            cursor: pointer;
-        }
-        i {
-            cursor: pointer;
-            margin-right: 5px;
-        }
-    }
+  }
+  .active {
+    color: brown;
+    font-weight: bold;
+  }
 }
 </style>
